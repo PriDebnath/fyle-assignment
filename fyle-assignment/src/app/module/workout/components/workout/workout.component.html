@@ -1,7 +1,89 @@
-<p>workout works!</p>
-<form [formGroup]="formGroup">
-  <mat-form-field class="example-full-width">
-    <mat-label>Favorite food</mat-label>
-    <input matInput placeholder="Ex. Pizza" value="Sushi" />
+<form
+  [formGroup]="workoutForm"
+  class="border-4 border-light-blue-500 border-opacity-100 rounded-md p-4 m-4"
+>
+  <h4>Workout Form</h4>
+  <!-- User -->
+  <mat-form-field>
+    <mat-label>User Name</mat-label>
+    <input formControlName="user" matInput placeholder="" />
+    <mat-error *ngIf="workoutForm.controls?.['user']?.hasError('required')">
+      User is required
+    </mat-error>
   </mat-form-field>
+  <div class="flex">
+    <!-- Workout type -->
+    <mat-form-field appearance="fill">
+      <mat-label>Workout Type</mat-label>
+      <mat-select formControlName="workout_type" errorState>
+        <mat-option *ngFor="let food of workoutTypes" [value]="food">
+          {{ food }}
+        </mat-option>
+      </mat-select>
+      <mat-error
+        *ngIf="workoutForm.controls?.['workout_type']?.hasError('required')"
+      >
+        Workout type is required
+      </mat-error>
+    </mat-form-field>
+    <!-- Workout minutes -->
+    <mat-form-field class="mx-2">
+      <mat-label> Workout Minutes</mat-label>
+      <input
+        formControlName="workout_minutes"
+        matInput
+        type="number"
+        placeholder=""
+      />
+    </mat-form-field>
+  </div>
+  <button
+    mat-raised-button
+    (click)="onSubmit($event)"
+    class="!rounded-full mt-4"
+  >
+    Add Workout
+  </button>
 </form>
+
+<div class="mat-elevation-z8">
+  <mat-table [dataSource]="dataSource">
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.user }} </mat-cell>
+    </ng-container>
+
+    <!-- Workouts Column -->
+    <ng-container matColumnDef="workouts">
+      <mat-header-cell *matHeaderCellDef> Workouts </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.workouts }} </mat-cell>
+    </ng-container>
+
+    <!-- Number of Workouts Column -->
+    <ng-container matColumnDef="numberOfWorkouts">
+      <mat-header-cell *matHeaderCellDef> Number of Workouts </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        {{ element.numberOfWorkouts }}
+      </mat-cell>
+    </ng-container>
+
+    <!-- Total Workout Minutes Column -->
+    <ng-container matColumnDef="totalWorkoutMinutes">
+      <mat-header-cell *matHeaderCellDef>
+        Total Workout Minutes
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        {{ element.totalWorkoutMinutes }}
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+  </mat-table>
+
+  <mat-paginator
+    [pageSizeOptions]="[5, 10, 20]"
+    showFirstLastButtons
+  ></mat-paginator>
+</div>

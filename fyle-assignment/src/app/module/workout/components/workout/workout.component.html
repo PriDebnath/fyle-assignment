@@ -15,26 +15,19 @@
     <!-- Workout type -->
     <mat-form-field appearance="fill">
       <mat-label>Workout Type</mat-label>
-      <mat-select formControlName="workout_type" errorState>
+      <mat-select formControlName="type" errorState>
         <mat-option *ngFor="let food of workoutTypes" [value]="food">
           {{ food }}
         </mat-option>
       </mat-select>
-      <mat-error
-        *ngIf="workoutForm.controls?.['workout_type']?.hasError('required')"
-      >
+      <mat-error *ngIf="workoutForm.controls?.['type']?.hasError('required')">
         Workout type is required
       </mat-error>
     </mat-form-field>
     <!-- Workout minutes -->
     <mat-form-field class="mx-2">
       <mat-label> Workout Minutes</mat-label>
-      <input
-        formControlName="workout_minutes"
-        matInput
-        type="number"
-        placeholder=""
-      />
+      <input formControlName="minutes" matInput type="number" placeholder="" />
     </mat-form-field>
   </div>
   <button

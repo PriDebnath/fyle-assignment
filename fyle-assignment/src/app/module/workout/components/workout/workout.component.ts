@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { LocalStorageService } from '../../services/localStorage/local-storage.service';
 import { MatTableDataSource } from '@angular/material/table';
+import { Workout } from '../../../../core/models/workout.model';
 
 interface WorkoutData {
   user: string;
@@ -61,6 +62,23 @@ export class WorkoutComponent implements OnInit {
   ngOnInit() {
     this.workoutForm = this.getForm();
     let ws = this.localStorageService.getParsedValue('workout_list');
+
+    let u: any = {};
+    ws.map((w: Workout) => {
+      if (!u[w.user!]) {
+        u[w.user!] = {
+          id: Object.keys(u).length + 1,
+          name: w.user!,
+          workouts: [],
+        };
+      }
+
+      u[w.user!].workouts.push(w);
+    });
+    console.log({ u });
+    console.log(Object.values(u));
+
+    //
     if (ws) {
       this.w = ws;
     }
@@ -70,8 +88,8 @@ export class WorkoutComponent implements OnInit {
   getForm() {
     return this.formBuilder.group({
       user: ['sss', Validators.required],
-      workout_minutes: ['10', Validators.required],
-      workout_type: ['', Validators.required],
+      minutes: ['10', Validators.required],
+      type: ['', Validators.required],
     });
   }
 

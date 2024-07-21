@@ -9,7 +9,7 @@ const routes: Routes = [
     component: WorkoutChartComponent,
   },
   {
-    path: '',
+    path: 'home',
     component: WorkoutComponent,
   },
 ];

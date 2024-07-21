@@ -1,0 +1,9 @@
+.active {
+  background-color: #00ffff8f;
+}
+
+.nav-link {
+  width: 100%;
+  text-align: center;
+  font-weight: 500;
+}

@@ -15,6 +15,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Workout } from '../../../../core/models/workout.model';
 import { User } from '../../../../core/models/user.model';
 import { SearchPipe } from '../../../../core/pipe/search-pipe/search-pipe.pipe';
+import { userData } from '../../data/userData';
 
 interface WorkoutData {
   user: string;
@@ -28,6 +29,7 @@ interface WorkoutData {
   styleUrl: './workout.component.css',
 })
 export class WorkoutComponent implements OnInit {
+  initialUserData: User[] = userData;
   userList: User[] = [];
   workoutList: Workout[] = [];
   workoutForm!: FormGroup;
@@ -59,20 +61,23 @@ export class WorkoutComponent implements OnInit {
 
   ngOnInit() {
     this.workoutForm = this.getForm();
-    let workoutListLocal = this.localStorageService.getParsedValue(
-      'workout_list'
-    ) as Workout[];
-    if (workoutListLocal?.length) {
-      this.workoutList = workoutListLocal;
-    }
+
     // Set userData
     if (this.workoutList?.length) {
       this.userList = this.convertWorkoutsToUsers(this.workoutList);
     }
+
+    let workoutListLocal =
+      this.localStorageService.getParsedValue('workout_list');
+
     this.dataSource = new MatTableDataSource<User>(this.userList);
 
-    console.log('user=>', this.userList);
-    console.log('workout=>', this.workoutList);
+    // use mocked data when localstroage is empty
+    if (workoutListLocal?.length) {
+      this.userList = this.convertWorkoutsToUsers(workoutListLocal);
+    } else {
+      this.userList = this.initialUserData;
+    }
     this.updatePagination();
   }
 

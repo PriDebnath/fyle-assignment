@@ -1,0 +1,11 @@
+.custom-selection-list .mat-pseudo-checkbox {
+  display: none !important;
+}
+
+::ng-deep .mdc-radio {
+  display: none !important;
+}
+
+/* .mdc-radio {
+  display: none !important;
+} */

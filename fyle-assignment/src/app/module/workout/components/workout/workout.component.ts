@@ -62,29 +62,24 @@ export class WorkoutComponent implements OnInit {
   ngOnInit() {
     this.workoutForm = this.getForm();
 
-    // Set userData
-    if (this.workoutList?.length) {
-      this.userList = this.convertWorkoutsToUsers(this.workoutList);
-    }
-
     let workoutListLocal =
       this.localStorageService.getParsedValue('workout_list');
-
-    this.dataSource = new MatTableDataSource<User>(this.userList);
-
     // use mocked data when localstroage is empty
     if (workoutListLocal?.length) {
+      this.workoutList = workoutListLocal;
       this.userList = this.convertWorkoutsToUsers(workoutListLocal);
     } else {
       this.userList = this.initialUserData;
     }
     this.updatePagination();
+
+    this.dataSource = new MatTableDataSource<User>(this.userList);
   }
 
   getForm() {
     return this.formBuilder.group({
-      user: ['sss', Validators.required],
-      minutes: [10, Validators.required],
+      user: ['', Validators.required],
+      minutes: ['', Validators.required],
       type: ['', Validators.required],
     });
   }
@@ -93,18 +88,17 @@ export class WorkoutComponent implements OnInit {
     event.preventDefault();
 
     let formValues = this.workoutForm?.value;
-    console.log(this.workoutForm.valid);
     if (this.workoutForm.valid) {
-      console.log(this.workoutForm.value);
-      this.workoutList.push(this.workoutForm.value);
-      console.log('w-->', this.workoutList);
-      this.localStorageService.saveKeyValue('workout_list', this.workoutList);
+      this.workoutList.push(formValues);
+      let workoutListLocal = JSON.parse(JSON.stringify(this.workoutList));
+      this.localStorageService.saveKeyValue('workout_list', workoutListLocal);
       // Set userData
       if (this.workoutList?.length) {
         this.userList = this.convertWorkoutsToUsers(this.workoutList);
       }
       this.dataSource = new MatTableDataSource<User>(this.userList);
       this.updatePagination();
+      this.workoutForm.reset();
     } else {
       this.workoutForm.markAllAsTouched();
     }
@@ -131,13 +125,6 @@ export class WorkoutComponent implements OnInit {
   }
 
   onModelChange(newValue: string) {
-    // console.log('Model changed:', newValue);
-    // this.cbr.detectChanges();
-
-    // let p = this.serachPipe.transform(this.paginatedData, newValue, 'name');
-    // this.paginatedData = p;
-    // this.cbr.detectChanges();
-    // console.log('pagi', this.paginatedData);
     this.updatePagination();
   }
 
@@ -189,7 +176,6 @@ export class WorkoutComponent implements OnInit {
         return workout_names.includes(selectedType);
       });
     } else {
-      // this.paginatedData = this.paginatedData
       this.updatePagination();
     }
   }

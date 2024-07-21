@@ -1,8 +1,5 @@
-<form
-  [formGroup]="workoutForm"
-  class="border-4 border-light-blue-500 border-opacity-100 rounded-md p-4 m-4"
->
-  <h4>Workout Form</h4>
+<form [formGroup]="workoutForm" class="shadow-md rounded-xl p-4 m-4 bg-white">
+  <h4 class="font-semibold py-2">Workout Form</h4>
   <!-- User -->
   <mat-form-field>
     <mat-label>User Name</mat-label>
@@ -39,9 +36,9 @@
   </button>
 </form>
 
-<div
-  class="border-4 border-light-blue-500 border-opacity-100 rounded-md p-4 m-4"
->
+<div class="shadow-md rounded-xl p-4 m-4 bg-white">
+  <h4 class="font-semibold py-2">Workout Form</h4>
+
   <div class="flex">
     <!-- Search -->
     <mat-form-field class="w-full">
@@ -103,50 +100,50 @@
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
   </mat-table>
+</div>
 
-  <div class="flex items-center justify-between p-4">
-    <button
-      mat-button
-      class="flex items-center"
-      (click)="previousPage()"
-      [disabled]="currentPage === 1"
-    >
-      <span>&laquo; Previous</span>
-    </button>
-    <div class="flex items-center">
-      <ng-container *ngFor="let page of pages">
-        <button
-          mat-button
-          class="mx-1"
-          [class.active]="page === currentPage"
-          (click)="goToPage(page)"
+<div class="flex items-center justify-between p-4">
+  <button
+    mat-button
+    class="flex items-center"
+    (click)="previousPage()"
+    [disabled]="currentPage === 1"
+  >
+    <span>&laquo; Previous</span>
+  </button>
+  <div class="flex items-center">
+    <ng-container *ngFor="let page of pages">
+      <button
+        mat-button
+        class="mx-1"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)"
+      >
+        {{ page }}
+      </button>
+    </ng-container>
+  </div>
+  <button
+    mat-button
+    class="flex items-center"
+    (click)="nextPage()"
+    [disabled]="currentPage === totalPages"
+  >
+    <span>Next &raquo;</span>
+  </button>
+  <div class="flex items-center ml-4">
+    <span>Items per page:</span>
+    <mat-form-field appearance="fill" class="mx-2">
+      <mat-select
+        [(value)]="itemsPerPage"
+        (selectionChange)="onItemsPerPageChange($event.value)"
+      >
+        <mat-option
+          *ngFor="let option of itemsPerPageOptions"
+          [value]="option"
+          >{{ option }}</mat-option
         >
-          {{ page }}
-        </button>
-      </ng-container>
-    </div>
-    <button
-      mat-button
-      class="flex items-center"
-      (click)="nextPage()"
-      [disabled]="currentPage === totalPages"
-    >
-      <span>Next &raquo;</span>
-    </button>
-    <div class="flex items-center ml-4">
-      <span>Items per page:</span>
-      <mat-form-field appearance="fill" class="mx-2">
-        <mat-select
-          [(value)]="itemsPerPage"
-          (selectionChange)="onItemsPerPageChange($event.value)"
-        >
-          <mat-option
-            *ngFor="let option of itemsPerPageOptions"
-            [value]="option"
-            >{{ option }}</mat-option
-          >
-        </mat-select>
-      </mat-form-field>
-    </div>
+      </mat-select>
+    </mat-form-field>
   </div>
 </div>

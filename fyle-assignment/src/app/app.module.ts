@@ -7,10 +7,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SearchPipe } from './core/pipe/search-pipe/search-pipe.pipe';
+import { WorkoutModule } from './module/workout/workout.module';
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, AppRoutingModule, BrowserAnimationsModule],
+  imports: [
+    BrowserModule,
+    WorkoutModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+  ],
   providers: [
     SearchPipe, // Add the pipe to the providers array
   ],

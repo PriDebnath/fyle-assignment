@@ -13,23 +13,26 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SearchPipe } from '../../core/pipe/search-pipe/search-pipe.pipe';
+import { HighchartsChartModule } from 'highcharts-angular';
+import { WorkoutChartComponent } from './components/workout-chart/workout-chart.component';
+import { WorkoutRoutingModule } from './workout-routing.module';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
-  declarations: [WorkoutComponent, SearchPipe],
+  declarations: [WorkoutComponent, SearchPipe, WorkoutChartComponent],
   imports: [
+    FormsModule,
     CommonModule,
-    MatFormFieldModule,
     MatInputModule,
+    MatTableModule,
     MatSelectModule,
     MatButtonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    MatTableModule,
+    MatFormFieldModule,
     MatPaginatorModule,
+    ReactiveFormsModule,
+    HighchartsChartModule,
+    WorkoutRoutingModule,
   ],
-  providers: [
-    SearchPipe, // Add the pipe to the providers array
-  ],
+  providers: [SearchPipe],
 })
 export class WorkoutModule {}

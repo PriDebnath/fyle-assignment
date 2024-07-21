@@ -5,7 +5,7 @@
   
 [build]
   # Directory where your Angular app is located after building
-  base = "/"
+  base = "/fyle-assignment/"
 
   # Command to build your Angular app
   command = "ng build"

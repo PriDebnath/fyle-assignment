@@ -8,6 +8,10 @@ https://drive.google.com/file/d/1Nfqa4iXpAyrym0mh_S3OTipInpc7LWnK/view
 
 ## fyle-assignment
 
+## Instruction
+
+https://fyleuniverse.notion.site/Frontend-Development-Challenge-091d1fad48d94c6a9de0c02465cc640a
+
 #### create initial app
 
 ```

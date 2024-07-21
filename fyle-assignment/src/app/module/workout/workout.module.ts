@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
+import { MatListModule } from '@angular/material/list';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SearchPipe } from '../../core/pipe/search-pipe/search-pipe.pipe';
@@ -23,6 +24,7 @@ import { WorkoutRoutingModule } from './workout-routing.module';
   imports: [
     FormsModule,
     CommonModule,
+    MatListModule,
     MatInputModule,
     MatTableModule,
     MatSelectModule,

@@ -12,10 +12,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SearchPipe } from '../../core/pipe/search-pipe/search-pipe.pipe';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
-  declarations: [WorkoutComponent],
+  declarations: [WorkoutComponent, SearchPipe],
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -26,6 +27,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     MatTableModule,
     MatPaginatorModule,
+  ],
+  providers: [
+    SearchPipe, // Add the pipe to the providers array
   ],
 })
 export class WorkoutModule {}

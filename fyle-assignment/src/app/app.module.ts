@@ -6,11 +6,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SearchPipe } from './core/pipe/search-pipe/search-pipe.pipe';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule, AppRoutingModule, BrowserAnimationsModule],
-  providers: [],
+  providers: [
+    SearchPipe, // Add the pipe to the providers array
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

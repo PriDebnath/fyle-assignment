@@ -1,4 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -8,6 +13,8 @@ import {
 import { LocalStorageService } from '../../services/localStorage/local-storage.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { Workout } from '../../../../core/models/workout.model';
+import { User } from '../../../../core/models/user.model';
+import { SearchPipe } from '../../../../core/pipe/search-pipe/search-pipe.pipe';
 
 interface WorkoutData {
   user: string;
@@ -21,74 +28,58 @@ interface WorkoutData {
   styleUrl: './workout.component.css',
 })
 export class WorkoutComponent implements OnInit {
-  w: any = [];
+  userList: User[] = [];
+  workoutList: Workout[] = [];
   workoutForm!: FormGroup;
   workoutTypes: string[] = ['Cycling', 'Running', 'Swimming', 'Yoga'];
+  filterTypes: string[] = ['All', 'Cycling', 'Running', 'Swimming', 'Yoga'];
+  // list
   displayedColumns: string[] = [
     'name',
     'workouts',
     'numberOfWorkouts',
     'totalWorkoutMinutes',
   ];
-
-  // Mock data, replace this with real data from the form or backend
-  ELEMENT_DATA: WorkoutData[] = [
-    {
-      user: 'John Doe',
-      workouts: 'Running, Cycling',
-      numberOfWorkouts: 2,
-      totalWorkoutMinutes: 75,
-    },
-    {
-      user: 'Jane Smith',
-      workouts: 'Swimming, Running',
-      numberOfWorkouts: 2,
-      totalWorkoutMinutes: 80,
-    },
-    {
-      user: 'Mike Johnson',
-      workouts: 'Yoga, Cycling',
-      numberOfWorkouts: 2,
-      totalWorkoutMinutes: 90,
-    },
-  ];
-  dataSource = new MatTableDataSource<WorkoutData>(this.ELEMENT_DATA);
+  search: string = '';
+  selectedFilterType: string = 'All';
+  dataSource = new MatTableDataSource<User>(this.userList);
+  currentPage = 1;
+  itemsPerPage = 5;
+  totalPages = 0;
+  itemsPerPageOptions = [5, 10, 25, 50];
+  pages: number[] = [];
+  paginatedData: User[] = [];
 
   constructor(
+    private serachPipe: SearchPipe,
+    private cbr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private localStorageService: LocalStorageService
   ) {}
 
   ngOnInit() {
     this.workoutForm = this.getForm();
-    let ws = this.localStorageService.getParsedValue('workout_list');
-
-    let u: any = {};
-    ws.map((w: Workout) => {
-      if (!u[w.user!]) {
-        u[w.user!] = {
-          id: Object.keys(u).length + 1,
-          name: w.user!,
-          workouts: [],
-        };
-      }
-
-      u[w.user!].workouts.push(w);
-    });
-    console.log({ u });
-    console.log(Object.values(u));
-
-    //
-    if (ws) {
-      this.w = ws;
+    let workoutListLocal = this.localStorageService.getParsedValue(
+      'workout_list'
+    ) as Workout[];
+    if (workoutListLocal?.length) {
+      this.workoutList = workoutListLocal;
     }
-    console.log({ ws });
+    // Set userData
+    if (this.workoutList?.length) {
+      this.userList = this.convertWorkoutsToUsers(this.workoutList);
+    }
+    this.dataSource = new MatTableDataSource<User>(this.userList);
+
+    console.log('user=>', this.userList);
+    console.log('workout=>', this.workoutList);
+    this.updatePagination();
   }
 
   getForm() {
     return this.formBuilder.group({
       user: ['sss', Validators.required],
-      minutes: ['10', Validators.required],
+      minutes: [10, Validators.required],
       type: ['', Validators.required],
     });
   }
@@ -100,11 +91,101 @@ export class WorkoutComponent implements OnInit {
     console.log(this.workoutForm.valid);
     if (this.workoutForm.valid) {
       console.log(this.workoutForm.value);
-      this.w.push(this.workoutForm.value);
-      console.log('w-->', this.w);
-      this.localStorageService.saveKeyValue('workout_list', this.w);
+      this.workoutList.push(this.workoutForm.value);
+      console.log('w-->', this.workoutList);
+      this.localStorageService.saveKeyValue('workout_list', this.workoutList);
+      // Set userData
+      if (this.workoutList?.length) {
+        this.userList = this.convertWorkoutsToUsers(this.workoutList);
+      }
+      this.dataSource = new MatTableDataSource<User>(this.userList);
+      this.updatePagination();
     } else {
       this.workoutForm.markAllAsTouched();
+    }
+  }
+
+  convertWorkoutsToUsers(workouts: Workout[]): User[] {
+    const userMap: { [key: string]: User } = {};
+    workouts.map((workout) => {
+      const userName = workout.user || 'Unknown';
+      if (!userMap[userName]) {
+        userMap[userName] = {
+          id: Object.keys(userMap).length + 1,
+          name: userName,
+          totalWorkoutMinutes: 0,
+          workouts: [],
+        };
+      }
+      userMap[userName].workouts.push(workout);
+      userMap[userName].totalWorkoutMinutes =
+        userMap[userName].totalWorkoutMinutes! + workout.minutes!;
+    });
+
+    return Object.values(userMap);
+  }
+
+  onModelChange(newValue: string) {
+    // console.log('Model changed:', newValue);
+    // this.cbr.detectChanges();
+
+    // let p = this.serachPipe.transform(this.paginatedData, newValue, 'name');
+    // this.paginatedData = p;
+    // this.cbr.detectChanges();
+    // console.log('pagi', this.paginatedData);
+    this.updatePagination();
+  }
+
+  updatePagination() {
+    this.totalPages = Math.ceil(this.userList.length / this.itemsPerPage);
+    this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    this.loadPage();
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadPage();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadPage();
+    }
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.loadPage();
+    }
+  }
+
+  onItemsPerPageChange(itemsPerPage: number) {
+    this.itemsPerPage = itemsPerPage;
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  loadPage() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedData = this.userList.slice(startIndex, endIndex);
+  }
+
+  filterByWorkoutType(selectedType: string): void {
+    this.updatePagination();
+
+    if (selectedType != 'All') {
+      this.paginatedData = this.paginatedData.filter((item) => {
+        let workout_names = item.workouts.map((w) => w.type);
+        return workout_names.includes(selectedType);
+      });
+    } else {
+      // this.paginatedData = this.paginatedData
+      this.updatePagination();
     }
   }
 }
